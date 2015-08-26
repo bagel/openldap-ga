@@ -961,6 +961,7 @@ enable_dynacl
 enable_aci
 enable_cleartext
 enable_crypt
+enable_totp
 enable_lmpasswd
 enable_spasswd
 enable_modules
@@ -1659,6 +1660,7 @@ SLAPD (Standalone LDAP Daemon) Options:
     --enable-aci	  enable per-object ACIs (experimental) no|yes|mod [no]
     --enable-cleartext	  enable cleartext passwords [yes]
     --enable-crypt	  enable crypt(3) passwords [no]
+    --enable-totp	  enable google authenticator [no]
     --enable-lmpasswd	  enable LAN Manager passwords [no]
     --enable-spasswd	  enable (Cyrus) SASL password verification [no]
     --enable-modules	  enable dynamic module support [no]
@@ -3878,6 +3880,27 @@ else
 fi
 
 # end --enable-crypt
+# OpenLDAP --enable-totp
+
+	# Check whether --enable-totp was given.
+if test "${enable_totp+set}" = set; then :
+  enableval=$enable_totp;
+	ol_arg=invalid
+	for ol_val in auto yes no ; do
+		if test "$enableval" = "$ol_val" ; then
+			ol_arg="$ol_val"
+		fi
+	done
+	if test "$ol_arg" = "invalid" ; then
+		as_fn_error "bad value $enableval for --enable-totp" "$LINENO" 5
+	fi
+	ol_enable_totp="$ol_arg"
+
+else
+  	ol_enable_totp=no
+fi
+
+# end --enable-totp
 # OpenLDAP --enable-lmpasswd
 
 	# Check whether --enable-lmpasswd was given.

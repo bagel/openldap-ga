@@ -271,6 +271,7 @@ OL_ARG_ENABLE(dynacl,[    --enable-dynacl	  enable run-time loadable ACL support
 OL_ARG_ENABLE(aci,[    --enable-aci	  enable per-object ACIs (experimental)], no, [no yes mod])dnl
 OL_ARG_ENABLE(cleartext,[    --enable-cleartext	  enable cleartext passwords], yes)dnl
 OL_ARG_ENABLE(crypt,[    --enable-crypt	  enable crypt(3) passwords], no)dnl
+OL_ARG_ENABLE(totp,[    --enable-totp	  enable google authenticator totp], no)dnl
 OL_ARG_ENABLE(lmpasswd,[    --enable-lmpasswd	  enable LAN Manager passwords], no)dnl
 OL_ARG_ENABLE(spasswd,[    --enable-spasswd	  enable (Cyrus) SASL password verification], no)dnl
 OL_ARG_ENABLE(modules,[    --enable-modules	  enable dynamic module support], no)dnl
@@ -2574,6 +2575,9 @@ if test "$ol_enable_cleartext" != no ; then
 fi
 if test "$ol_enable_crypt" != no ; then
 	AC_DEFINE(SLAPD_CRYPT,1,[define to support crypt(3) passwords])
+fi
+if test "$ol_enable_totp" != no ; then
+	AC_DEFINE(SLAPD_TOTP,1,[define to support google authenticator])
 fi
 if test "$ol_link_spasswd" != no ; then
 	AC_DEFINE(SLAPD_SPASSWD,1,[define to support SASL passwords])
