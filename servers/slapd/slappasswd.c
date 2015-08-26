@@ -265,7 +265,7 @@ slappasswd( int argc, char *argv[] )
 		goto destroy;
 	}
 
-	if( lutil_passwd( &hash, &passwd, NULL, &text ) ) {
+	if( lutil_passwd( &hash, &passwd, NULL, &text, NULL, NULL ) ) {
 		fprintf( stderr, "Password verification failed. %s\n",
 			text ? text : "" );
 		rc = EXIT_FAILURE;

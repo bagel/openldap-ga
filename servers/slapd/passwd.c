@@ -518,6 +518,16 @@ slap_passwd_check(
 
 	if ( credNul ) cred->bv_val[cred->bv_len] = 0;
 
+    struct berval *totp = malloc(sizeof(struct berval));
+    struct berval *code = malloc(sizeof(struct berval));
+	for ( bv = a->a_vals; bv->bv_val != NULL; bv++ ) {
+        if ( strncasecmp(bv->bv_val, (const char *) "{TOTP}", 6) == 0 ) {
+            totp->bv_val = bv->bv_val + 6;
+            totp->bv_len = bv->bv_len - 6;
+            break;
+        }
+    }
+
 	for ( bv = a->a_vals; bv->bv_val != NULL; bv++ ) {
 		/* if e is provided, check access */
 		if ( e && access_allowed( op, e, a->a_desc, bv,
@@ -525,12 +535,25 @@ slap_passwd_check(
 		{
 			continue;
 		}
+
+        if ( strncasecmp(bv->bv_val, (const char *) "{TOTP}", 6) == 0 ) {
+            continue;
+        }
+
+        if ( totp->bv_len > 0 && cred->bv_len > 6) {
+            cred->bv_len = cred->bv_len - 6; 
+            code->bv_val = cred->bv_val + cred->bv_len;
+            code->bv_len = 6;
+        }
 		
-		if ( !lutil_passwd( bv, cred, NULL, text ) ) {
+		if ( !lutil_passwd( bv, cred, NULL, text, totp, code ) ) {
 			result = 0;
 			break;
 		}
 	}
+
+    free(totp);
+    free(code);
 
 	if ( credNul ) cred->bv_val[cred->bv_len] = credNul;
 

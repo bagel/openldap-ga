@@ -1836,7 +1836,7 @@ slapi_pw_find(
 		return 1;
 
 	for ( i = 0; vals[i] != NULL; i++ ) {
-		if ( !lutil_passwd( vals[i], v, NULL, NULL ) )
+		if ( !lutil_passwd( vals[i], v, NULL, NULL, NULL, NULL ) )
 			return 0;
 	}
 

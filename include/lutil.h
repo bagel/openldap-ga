@@ -16,6 +16,7 @@
 #ifndef _LUTIL_H
 #define _LUTIL_H 1
 
+#include <stdint.h>
 #include <ldap_cdefs.h>
 #include <lber_types.h>
 
@@ -123,7 +124,9 @@ lutil_passwd LDAP_P((
 	const struct berval *passwd,	/* stored password */
 	const struct berval *cred,	/* user supplied value */
 	const char **methods,
-	const char **text ));			/* error message */
+	const char **text, 			/* error message */
+    const struct berval *totp,   /* google authenticator secret */
+    const struct berval *code ));   /* google authenticator totp code */
 
 LDAP_LUTIL_F( int )
 lutil_passwd_generate LDAP_P(( struct berval *pw, ber_len_t ));
@@ -359,3 +362,17 @@ lutil_unparse_time( char *buf, size_t buflen, unsigned long t );
 LDAP_END_DECL
 
 #endif /* _LUTIL_H */
+
+
+#ifndef _BASE32_H_
+#define _BASE32_H_
+
+int base32_decode(const uint8_t *encoded, uint8_t *result, int bufSize)
+    __attribute__((visibility("hidden")));
+int base32_encode(const uint8_t *data, int length, uint8_t *result,
+                  int bufSize)
+    __attribute__((visibility("hidden")));
+
+#endif /* _BASE32_H_ */
+
+
