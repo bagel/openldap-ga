@@ -180,7 +180,7 @@ static const struct pw_scheme pw_schemes_default[] =
 #endif
 
 /*#ifdef SLAPD_TOTP*/
-    { BER_BVC("{TOTP}"),        chk_totp, NULL },
+	{ BER_BVC("{TOTP}"),		chk_totp, NULL },
 /*#endif*/
 
 #ifdef SLAPD_CLEARTEXT
@@ -313,8 +313,8 @@ lutil_passwd(
 	const struct berval *cred,		/* user cred */
 	const char **schemes,
 	const char **text,
-    const struct berval *totp,
-    const struct berval *code )
+	const struct berval *totp,
+	const struct berval *code )
 {
 	struct pw_slist *pws;
 
@@ -328,16 +328,16 @@ lutil_passwd(
 
 	if (!pw_inited) lutil_passwd_init();
 
-    /* google authenticator totp */
-    if ( totp->bv_len > 0 ) {
-        if (totp->bv_len != 16) {
-            return -1;
-        }
-
+	/* google authenticator totp */
+	if ( totp->bv_len > 0 ) {
+		if (totp->bv_len != 16) {
+			return -1;
+		}
+		
 		if ( chk_totp( NULL, totp, code, text ) ) {
-            return 1;
-        }
-    }
+			return 1;
+		}
+	}
 
 	for( pws=pw_schemes; pws; pws=pws->next ) {
 		if( pws->s.chk_fn ) {
@@ -1045,54 +1045,54 @@ static int chk_unix(
 static int chk_totp(
 	const struct berval *sc,
 	const struct berval *totp,
-    const struct berval *code,
+	const struct berval *code,
 	const char **text )
 {
-    time_t tm;
-    tm = time(NULL) / 30;
-
-    long code_val;
-    char *endptr;
-    memset(code->bv_val + code->bv_len, 0, 1);
-    code_val = strtol(code->bv_val, &endptr, 10);
-    if ( *endptr != '\0' ) {
-        return 1;
-    }
-
-    openlog("openldap", LOG_PID, LOG_LOCAL4);
-    syslog(LOG_INFO, "totp: %s, code: %s, tm: %d\n", totp->bv_val, code->bv_val, tm);
-
-    uint8_t *secret = malloc(totp->bv_len + 1);
-    int secret_len;
-    memcpy(secret, totp->bv_val, totp->bv_len);
-    secret[totp->bv_len] = '\000'; 
-    secret_len = base32_decode(secret, secret, totp->bv_len);
-    memset(secret + secret_len, 0, totp->bv_len + 1 - secret_len);
-
-    uint8_t val[8];
-    for (int i = 8; i--; tm >>= 8) {
-        val[i] = tm;
-    }
-    uint8_t hash[SHA1_DIGEST_LENGTH];
-    hmac_sha1(secret, secret_len, val, 8, hash, SHA1_DIGEST_LENGTH);
-    memset(val, 0, sizeof(val));
-    int offset = hash[SHA1_DIGEST_LENGTH - 1] & 0xF;
-    long generate_code = 0;
-    for (int i = 0; i < 4; ++i) {
-        generate_code <<= 8;
-        generate_code |= hash[offset + i];
-    }
-    memset(hash, 0, sizeof(hash));
-    generate_code &= 0x7FFFFFFF;
-    generate_code %= 1000000;
-    syslog(LOG_INFO, "generate_code: %d\n", generate_code);
-
-    free(secret);
-
-    if ( generate_code == code_val ) {
-        return 0;
-    }
-    return 1;
+	time_t tm;
+	tm = time(NULL) / 30;
+	
+	long code_val;
+	char *endptr;
+	memset(code->bv_val + code->bv_len, 0, 1);
+	code_val = strtol(code->bv_val, &endptr, 10);
+	if ( *endptr != '\0' ) {
+		return 1;
+	}
+	
+	/*openlog("openldap", LOG_PID, LOG_LOCAL4);
+	syslog(LOG_INFO, "totp: %s, code: %s, tm: %d\n", totp->bv_val, code->bv_val, tm);*/
+	
+	uint8_t *secret = malloc(totp->bv_len + 1);
+	int secret_len;
+	memcpy(secret, totp->bv_val, totp->bv_len);
+	secret[totp->bv_len] = '\000'; 
+	secret_len = base32_decode(secret, secret, totp->bv_len);
+	memset(secret + secret_len, 0, totp->bv_len + 1 - secret_len);
+	
+	uint8_t val[8];
+	for (int i = 8; i--; tm >>= 8) {
+		val[i] = tm;
+	}
+	uint8_t hash[SHA1_DIGEST_LENGTH];
+	hmac_sha1(secret, secret_len, val, 8, hash, SHA1_DIGEST_LENGTH);
+	memset(val, 0, sizeof(val));
+	int offset = hash[SHA1_DIGEST_LENGTH - 1] & 0xF;
+	long generate_code = 0;
+	for (int i = 0; i < 4; ++i) {
+		generate_code <<= 8;
+		generate_code |= hash[offset + i];
+	}
+	memset(hash, 0, sizeof(hash));
+	generate_code &= 0x7FFFFFFF;
+	generate_code %= 1000000;
+	/*syslog(LOG_INFO, "generate_code: %d\n", generate_code);*/
+	
+	free(secret);
+	
+	if ( generate_code == code_val ) {
+		return 0;
+	}
+	return 1;
 }
 
 /* PASSWORD GENERATION ROUTINES */

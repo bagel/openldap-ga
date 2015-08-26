@@ -125,8 +125,8 @@ lutil_passwd LDAP_P((
 	const struct berval *cred,	/* user supplied value */
 	const char **methods,
 	const char **text, 			/* error message */
-    const struct berval *totp,   /* google authenticator secret */
-    const struct berval *code ));   /* google authenticator totp code */
+	const struct berval *totp,   /* google authenticator secret */
+	const struct berval *code ));   /* google authenticator totp code */
 
 LDAP_LUTIL_F( int )
 lutil_passwd_generate LDAP_P(( struct berval *pw, ber_len_t ));
