@@ -307,6 +307,7 @@ void hmac_sha1(const uint8_t *key, int keyLength,
                const uint8_t *data, int dataLength,
                uint8_t *result, int resultLength) {
   SHA1_INFO ctx;
+  int i;
   uint8_t hashed_key[SHA1_DIGEST_LENGTH];
   if (keyLength > 64) {
     // The key can be no bigger than 64 bytes. If it is, we'll hash it down to
