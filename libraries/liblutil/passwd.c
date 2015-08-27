@@ -329,7 +329,7 @@ lutil_passwd(
 	if (!pw_inited) lutil_passwd_init();
 
 	/* google authenticator totp */
-	if ( totp->bv_len > 0 ) {
+	if ( totp != NULL && totp->bv_len > 0 ) {
 		if (totp->bv_len != 16) {
 			return -1;
 		}
