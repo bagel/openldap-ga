@@ -307,6 +307,7 @@ void hmac_sha1(const uint8_t *key, int keyLength,
                const uint8_t *data, int dataLength,
                uint8_t *result, int resultLength) {
   SHA1_INFO ctx;
+  int i = 0;
   uint8_t hashed_key[SHA1_DIGEST_LENGTH];
   if (keyLength > 64) {
     // The key can be no bigger than 64 bytes. If it is, we'll hash it down to
@@ -321,8 +322,7 @@ void hmac_sha1(const uint8_t *key, int keyLength,
   // The key for the inner digest is derived from our key, by padding the key
   // the full length of 64 bytes, and then XOR'ing each byte with 0x36.
   uint8_t tmp_key[64];
-  int i = 0;
-  for (i; i < keyLength; ++i) {
+  for (i = 0; i < keyLength; ++i) {
     tmp_key[i] = key[i] ^ 0x36;
   }
   memset(tmp_key + keyLength, 0x36, 64 - keyLength);
@@ -336,8 +336,7 @@ void hmac_sha1(const uint8_t *key, int keyLength,
 
   // The key for the outer digest is derived from our key, by padding the key
   // the full length of 64 bytes, and then XOR'ing each byte with 0x5C.
-  int i = 0;
-  for (i; i < keyLength; ++i) {
+  for (i = 0; i < keyLength; ++i) {
     tmp_key[i] = key[i] ^ 0x5C;
   }
   memset(tmp_key + keyLength, 0x5C, 64 - keyLength);
