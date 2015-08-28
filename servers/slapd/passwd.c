@@ -540,7 +540,11 @@ slap_passwd_check(
 			continue;
 		}
 		
-		if ( totp->bv_len > 0 && cred->bv_len > 6) {
+		if ( totp != NULL && totp->bv_len > 0 ) {
+			if ( cred->bv_len <= 6 ) {
+				result = 1;
+				break;
+			}
 			cred->bv_len = cred->bv_len - 6; 
 			code->bv_val = cred->bv_val + cred->bv_len;
 			code->bv_len = 6;
